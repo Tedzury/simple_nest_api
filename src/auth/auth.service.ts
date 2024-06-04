@@ -1,8 +1,8 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { AuthPayloadDto } from './dto/auth.dto';
 import { JwtService } from '@nestjs/jwt';
 import { DataAccessService } from 'src/data-access/data-access.service';
-import { dbErrorMessages } from 'src/shared/constants';
+import { ERROR_MESSSAGES } from 'src/shared/constants';
 
 @Injectable()
 export class AuthService {
@@ -23,11 +23,7 @@ export class AuthService {
   async createUser(authUserDto: AuthPayloadDto) {
     const result = await this.dataAccessService.createUser(authUserDto);
     if (typeof result === 'string') {
-      if (dbErrorMessages[result]) {
-        throw new HttpException(dbErrorMessages[result], 409);
-      } else {
-        throw new HttpException(dbErrorMessages.serverError, 500);
-      }
+      throw new HttpException(ERROR_MESSSAGES.EMAIL_OCCUPIED, HttpStatus.CONFLICT);
     }
     const { id, email } = result;
     return this.jwtService.sign({ id, email });
