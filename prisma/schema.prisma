@@ -8,56 +8,52 @@ generator client {
 }
 
 model User {
-  id       String @id @default(uuid())
-  email    String @unique
+  id       String  @id @default(uuid())
+  email    String  @unique
   password String
   cart     Cart?
-  // orders   Order[]
+  orders   Order[]
 }
 
 model Cart {
-  id        String @id @default(uuid())
-  // productList ProductCartItem[]
-  totalCost Float  @default(0.0)
-  user      User   @relation(fields: [userId], references: [id])
-  userId    String @unique
+  id          String            @id @default(uuid())
+  productList ProductCartItem[]
+  totalCost   Float             @default(0.0)
+  user        User              @relation(fields: [userId], references: [id])
+  userId      String            @unique
 }
 
-// model Product {
-//   id               String             @id @default(uuid())
-//   name             String
-//   price            Float
-//   description      String
-//   ProductCartItem  ProductCartItem[]
-//   ProductOrderItem ProductOrderItem[]
-// }
+model Product {
+  id          String @id @default(uuid())
+  name        String
+  price       Float
+  description String
+}
 
-// model ProductCartItem {
-//   id        String   @id @default(uuid())
-//   cart      Cart?    @relation(fields: [cartId], references: [id])
-//   cartId    String
-//   product   Product? @relation(fields: [productId], references: [id])
-//   productId String?
-//   name      String
-//   price     Float
-//   quantity  Int
-// }
+model ProductCartItem {
+  id        String  @id @default(uuid())
+  cart      Cart?   @relation(fields: [cartId], references: [id])
+  cartId    String
+  productId String?
+  name      String
+  price     Float
+  quantity  Int
+}
 
-// model Order {
-//   id          String             @id @default(cuid())
-//   userId      String
-//   user        User               @relation(fields: [userId], references: [id])
-//   productList ProductOrderItem[]
-//   totalCost   Float              @default(0.0)
-// }
+model Order {
+  id          String             @id @default(cuid())
+  userId      String
+  user        User               @relation(fields: [userId], references: [id])
+  productList ProductOrderItem[]
+  totalCost   Float              @default(0.0)
+}
 
-// model ProductOrderItem {
-//   id        String   @id @default(uuid())
-//   order     Order?   @relation(fields: [orderId], references: [id])
-//   orderId   String
-//   product   Product? @relation(fields: [productId], references: [id])
-//   productId String?
-//   name      String
-//   price     Float
-//   quantity  Int
-// }
+model ProductOrderItem {
+  id        String  @id @default(uuid())
+  order     Order?  @relation(fields: [orderId], references: [id])
+  orderId   String
+  productId String?
+  name      String
+  price     Float
+  quantity  Int
+}

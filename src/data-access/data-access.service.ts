@@ -20,4 +20,12 @@ export class DataAccessService {
       return e.code;
     }
   }
+
+  async getAllProducts() {
+    return await this.prismaService.product.findMany();
+  }
+
+  async getSingleProduct(id: string) {
+    return await this.prismaService.product.findUnique({ where: { id } });
+  }
 }
