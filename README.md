@@ -1,73 +1,130 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Simple nest.js api
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+# 🚀 Getting Started
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+To run the project locally, you would have to download zip file with the repository or clone it to your computer.
 
-## Description
+## Setup and Running
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Requirements:
 
-## Installation
+- Use node 20 LTS
+- Installed git on your computer.
+- Code Editor of your choice.
+- Installed postgresql database.
 
-```bash
-$ npm install
+## Installation And Preparation
+
+Clone repository on the computer:
+
+```
+git clone https://github.com/Tedzury/simple_nest_api.git
 ```
 
-## Running the app
+or download zip file manually with the repository.
 
-```bash
-# development
-$ npm run start
+Navigate into project folder and run:
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+npm install
 ```
 
-## Test
+Create `.env` file in the root of the project and add all the necessary variables.
 
-```bash
-# unit tests
-$ npm run test
+You can find `.env.example` as an example file in the project root or follow the lines below:
 
-# e2e tests
-$ npm run test:e2e
+Run a prisma ORM migration and generation:
 
-# test coverage
-$ npm run test:cov
+```
+npx prisma generate and npx prisma migrate dev
 ```
 
-## Support
+Finally, run a server:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+```
+npm run start:dev
+```
 
-## Stay in touch
+## Available Endpoints:
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- ### signup
 
-## License
+endpoint: 'auth/signup'
 
-Nest is [MIT licensed](LICENSE).
+method: POST
+
+body: {
+"email": "name",
+"password": "1234"
+}
+
+result: returns jwt token for newly created user
+
+- ### login
+
+endpoint: 'auth/login'
+
+method: POST
+
+body: {
+"email": "name",
+"password": "1234"
+}
+
+result: returns jwt token for previosly created user
+
+- ### all products
+
+endpoint: 'products'
+
+method: GET
+
+result: returns list of all available products
+
+- ### single product
+
+endpoint: 'products/:id'
+
+method: GET
+
+result: returns signle product
+
+- ### get cart
+
+endpoint: 'cart'
+
+method: GET
+
+result: returns cart with list of products added to cart for the current user
+
+- ### add product to cart
+
+endpoint: 'cart/addToCart'
+
+method: PATCH
+
+body: {
+"productId": "4"
+}
+
+result: adds specified product to the cart, recalculates cart total price, returns updated cart;
+
+- ### remove product from the cart
+
+endpoint: 'cart/removeFromCart'
+
+method: PATCH
+
+body: {
+"productId": "4"
+}
+
+result: removes specified product from the cart, recalculates cart total price, returns updated cart;
+
+# TODO:
+
+- containerize server and db into docker
+- add initial seeding to the database
+- add self documentation with swagger
+- add logic and endpoint to orders
+- write tests
