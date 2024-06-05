@@ -28,4 +28,13 @@ export class CartController {
       req.body.productId.toString(),
     );
   }
+
+  @Patch('removeFromCart')
+  @UseGuards(JwtAuthGuard)
+  removeFromCart(@Req() req: Request) {
+    return this.cartService.removeItemFromCart(
+      (req.user as RequestUserType).id,
+      req.body.productId.toString(),
+    );
+  }
 }

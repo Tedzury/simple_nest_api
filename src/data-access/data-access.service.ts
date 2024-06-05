@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { AuthPayloadDto } from 'src/auth/dto/auth.dto';
 import { PrismaClientService } from 'src/prisma-client/prisma-client.service';
-import { ERROR_MESSSAGES } from 'src/shared/constants';
+import { ERROR_MESSSAGES, MODIFY_CART_ACTIONS } from 'src/shared/constants';
 
 @Injectable()
 export class DataAccessService {
@@ -51,7 +51,7 @@ export class DataAccessService {
     });
   }
 
-  async addItemToCart(userId: string, productId: string) {
+  async modifyCartItems(userId: string, productId: string, action: string) {
     try {
       const { cart } = await this.getCart(userId);
 
@@ -69,36 +69,49 @@ export class DataAccessService {
         where: { cartId: cart.id, productId },
       });
 
-      if (existingCartItem) {
-        await this.prismaService.productCartItem.update({
-          where: { id: existingCartItem.id },
-          data: {
-            quantity: { increment: 1 },
-          },
-        });
+      if (action === MODIFY_CART_ACTIONS.ADD) {
+        if (existingCartItem) {
+          await this.prismaService.productCartItem.update({
+            where: { id: existingCartItem.id },
+            data: {
+              quantity: { increment: 1 },
+            },
+          });
+        } else {
+          await this.prismaService.productCartItem.create({
+            data: {
+              cartId: cart.id,
+              productId,
+              name: product.name,
+              price: product.price,
+              quantity: 1,
+            },
+          });
+        }
       } else {
-        await this.prismaService.productCartItem.create({
-          data: {
-            cartId: cart.id,
-            productId,
-            name: product.name,
-            price: product.price,
-            quantity: 1,
-          },
-        });
+        if (!existingCartItem) throw new Error(ERROR_MESSSAGES.CART_ITEM_NOT_FOUND);
+        if (existingCartItem && existingCartItem.quantity >= 2) {
+          await this.prismaService.productCartItem.update({
+            where: { id: existingCartItem.id },
+            data: {
+              quantity: { decrement: 1 },
+            },
+          });
+        } else {
+          await this.prismaService.productCartItem.delete({
+            where: { id: existingCartItem.id },
+          });
+        }
       }
 
       const allCartItems = await this.getAllCartItems(cart.id);
       await this.updateCartPrice(allCartItems, cart.id);
-      const { totalCost, id } = (await this.getCart(userId)).cart;
 
-      return { cart: { totalCost, id }, productsList: allCartItems };
+      return this.getCart(userId);
     } catch (error) {
       return error.message;
     }
   }
-
-  async removeItemFromCart() {}
 
   async getAllCartItems(cartId: string) {
     return await this.prismaService.productCartItem.findMany({
